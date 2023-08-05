@@ -1,4 +1,5 @@
 use std::fmt;
+use std::cmp;
 
 
 #[derive(Debug)]
@@ -26,9 +27,6 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
             }
         }
     }
-}
-
-impl<T> BinaryTree<T> where T: fmt::Display + 'static{
     fn infix_search(&self) {
         match self {
             BinaryTree::<T>::Nil => (),
@@ -39,9 +37,6 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
             }
         }
     }
-}
-
-impl<T> BinaryTree<T> where T: fmt::Display + 'static{
     fn postfix_search(&self) {
         match self {
             BinaryTree::<T>::Nil => (),
@@ -54,6 +49,23 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
     }
 }
 
+impl<T> BinaryTree<T>{
+    fn height(&self) -> u64{
+        match self {
+            BinaryTree::<T>::Nil => 0,
+            BinaryTree::<T>::Node(t, g, d) => 1 + cmp::max(g.height(), d.height()),
+        }
+    }
+
+    fn size(&self) -> u64{
+        match self{
+            BinaryTree::<T>::Nil => 0,
+            BinaryTree::<T>::Node(t, g, d) => 1 + g.size() + d.size(),
+        }
+    }
+}
+
+
 fn main() {
     
     let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
@@ -64,4 +76,8 @@ fn main() {
     println!("{}", t.find(&0));
 
     t.prefix_search();
+    println!("");
+
+    println!("{}", t.height());
+    println!("{}", t.size());
 }
