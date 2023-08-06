@@ -170,6 +170,12 @@ impl<T> PartialEq for BinaryTree<T> where T: PartialEq{
     }
 }
 
+impl<T> Default for BinaryTree<T> {
+    fn default() -> Self{
+        BinaryTree::<T>::Nil
+    }
+}
+
 
 
 
