@@ -2,6 +2,7 @@ use std::collections::VecDeque;
 use std::fmt;
 use std::cmp;
 
+use rand::Rng;
 
 #[derive(Debug)]
 pub enum BinaryTree<T>{
@@ -54,13 +55,13 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
         
         q.push_back(self);
 
-        while q.len() != 1{
+        while q.len() != 0{
             let t = q.pop_front().unwrap();
 
             match t {
                 BinaryTree::<T>::Nil => (),
                 BinaryTree::<T>::Node(x, g, d) => {
-                    println!("{}", x);
+                    print!("{} ", x);
                     q.push_back(&g);
                     q.push_back(&d);
                 }
@@ -114,6 +115,35 @@ impl<T> BinaryTree<T>{
             }
         }
     }
+
+    pub fn add_simple(&mut self, x: T){
+        match self {
+            BinaryTree::<T>::Nil => {
+                let mut sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
+                *self = sub_t;
+            } 
+            BinaryTree::<T>::Node(y, g, d) => g.add_simple(x)
+        }
+    }
+
+    pub fn add_random(&mut self, x: T){
+        match self {
+            BinaryTree::<T>::Nil => {
+                let mut sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
+                *self = sub_t;
+            } 
+            BinaryTree::<T>::Node(y, g, d) => {
+                let r = rand::random::<u8>() % 2;
+                if r == 0{
+                    g.add_random(x);
+                }
+                else{
+                    d.add_random(x);
+                }
+            }
+        }
+
+    }
 }
 
 #[cfg(test)]
@@ -131,15 +161,21 @@ mod tests {
 
     #[test]
     fn test_height() {
-        let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
+        let mut t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
 
         assert_eq!(t.height(), 2);
+        
+        t.add_simple(1);
+        assert_eq!(t.size(), 3);
     }
 
     #[test]
     fn test_size() {
-        let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
+        let mut t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
 
         assert_eq!(t.size(), 2);
+
+        t.add_simple(1);
+        assert_eq!(t.size(), 3);
     }
 }
