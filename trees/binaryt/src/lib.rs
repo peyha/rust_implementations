@@ -4,13 +4,13 @@ use std::cmp;
 
 
 #[derive(Debug)]
-enum BinaryTree<T>{
+pub enum BinaryTree<T>{
     Nil,
     Node(T, Box<BinaryTree<T>>, Box<BinaryTree<T>>),
 }
 
 impl<T> BinaryTree<T> where T: std::cmp::PartialEq + 'static{
-    fn find(&self, x: &T) -> bool{
+    pub fn find(&self, x: &T) -> bool{
         match self {
             BinaryTree::<T>::Nil => false,
             BinaryTree::<T>::Node(t, g, d) => (*t == *x) || g.find(x) || d.find(x), 
@@ -19,7 +19,7 @@ impl<T> BinaryTree<T> where T: std::cmp::PartialEq + 'static{
 }
 
 impl<T> BinaryTree<T> where T: fmt::Display + 'static{
-    fn prefix_search(&self) {
+    pub fn prefix_search(&self) {
         match self {
             BinaryTree::<T>::Nil => (),
             BinaryTree::<T>::Node(t, g, d) => {
@@ -28,7 +28,7 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
             }
         }
     }
-    fn infix_search(&self) {
+    pub fn infix_search(&self) {
         match self {
             BinaryTree::<T>::Nil => (),
             BinaryTree::<T>::Node(t, g, d) => {
@@ -38,7 +38,7 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
             }
         }
     }
-    fn postfix_search(&self) {
+    pub fn postfix_search(&self) {
         match self {
             BinaryTree::<T>::Nil => (),
             BinaryTree::<T>::Node(t, g, d) => {
@@ -48,51 +48,98 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
             }
         }
     }
+
+    pub fn print_bfs(&self){
+        let mut q: VecDeque<&BinaryTree<T>> = VecDeque::new();
+        
+        q.push_back(self);
+
+        while q.len() != 1{
+            let t = q.pop_front().unwrap();
+
+            match t {
+                BinaryTree::<T>::Nil => (),
+                BinaryTree::<T>::Node(x, g, d) => {
+                    println!("{}", x);
+                    q.push_back(&g);
+                    q.push_back(&d);
+                }
+            }
+        }
+    }
 }
 
 
 
 impl<T> BinaryTree<T>{
-    fn height(&self) -> u64{
+    pub fn height(&self) -> u64{
         match self {
             BinaryTree::<T>::Nil => 0,
             BinaryTree::<T>::Node(t, g, d) => 1 + cmp::max(g.height(), d.height()),
         }
     }
 
-    fn size(&self) -> u64{
+    pub fn size(&self) -> u64{
         match self{
             BinaryTree::<T>::Nil => 0,
             BinaryTree::<T>::Node(t, g, d) => 1 + g.size() + d.size(),
         }
     }
 
-    fn dfs(&self){
+    pub fn dfs(&self){
         match self {
             BinaryTree::<T>::Nil => (),
             BinaryTree::<T>::Node(t, g, d) => {
                 // Do thing on t
-                dfs(g); dfs(d)
+                g.dfs(); d.dfs()
             }
         }
     }
 
-    fn bfs(&self){
-        let mut q: VecDeque<BinaryTree<T>> = VecDeque::new();
+    pub fn bfs(&self){
+        let mut q: VecDeque<&BinaryTree<T>> = VecDeque::new();
         
         q.push_back(self);
 
         while q.len() != 1{
-            let t = q.pop_front();
+            let t = q.pop_front().unwrap();
 
             match t {
                 BinaryTree::<T>::Nil => (),
                 BinaryTree::<T>::Node(x, g, d) => {
                     // Do thing on x
-                    q.push_back(g);
-                    q.push_back(d);
+                    q.push_back(&g);
+                    q.push_back(&d);
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    
+    #[test]
+    fn test_find() {
+        let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
+
+        assert!(!t.find(&2));
+        assert!(t.find(&0));
+    }
+
+    #[test]
+    fn test_height() {
+        let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
+
+        assert_eq!(t.height(), 2);
+    }
+
+    #[test]
+    fn test_size() {
+        let t: BinaryTree<i64> = BinaryTree::<i64>::Node(1, Box::new(BinaryTree::<i64>::Node(0, Box::new(BinaryTree::<i64>::Nil), Box::new(BinaryTree::<i64>::Nil))), Box::new(BinaryTree::<i64>::Nil));
+
+        assert_eq!(t.size(), 2);
     }
 }

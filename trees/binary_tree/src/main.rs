@@ -1,5 +1,5 @@
 
-use binary_tree::BinaryTree;
+use binaryt::BinaryTree;
 
 fn main() {
     
@@ -7,12 +7,5 @@ fn main() {
 
     println!("t is {:?}", t);
 
-    println!("{}", t.find(&2));
-    println!("{}", t.find(&0));
-
-    t.prefix_search();
-    println!("");
-
-    println!("{}", t.height());
-    println!("{}", t.size());
+    t.print_bfs();
 }
