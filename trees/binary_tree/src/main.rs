@@ -12,4 +12,7 @@ fn main() {
     println!("t is {:?}", t);
 
     t.print_bfs();
+    t.reverse();
+    t.print_bfs();
+    
 }

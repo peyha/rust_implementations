@@ -67,6 +67,7 @@ impl<T> BinaryTree<T> where T: fmt::Display + 'static{
                 }
             }
         }
+        println!("");
     }
 }
 
@@ -119,7 +120,7 @@ impl<T> BinaryTree<T>{
     pub fn add_simple(&mut self, x: T){
         match self {
             BinaryTree::<T>::Nil => {
-                let mut sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
+                let sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
                 *self = sub_t;
             } 
             BinaryTree::<T>::Node(y, g, d) => g.add_simple(x)
@@ -129,10 +130,10 @@ impl<T> BinaryTree<T>{
     pub fn add_random(&mut self, x: T){
         match self {
             BinaryTree::<T>::Nil => {
-                let mut sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
+                let sub_t = BinaryTree::<T>::Node(x, Box::new(BinaryTree::<T>::Nil), Box::new(BinaryTree::<T>::Nil));
                 *self = sub_t;
             } 
-            BinaryTree::<T>::Node(y, g, d) => {
+            BinaryTree::<T>::Node(_, g, d) => {
                 let r = rand::random::<u8>() % 2;
                 if r == 0{
                     g.add_random(x);
@@ -145,6 +146,20 @@ impl<T> BinaryTree<T>{
 
     }
 }
+
+impl<T> BinaryTree<T>{
+    pub fn reverse(&mut self){
+        match self {
+            BinaryTree::<T>::Nil => (),
+            BinaryTree::<T>::Node(x, g, d) => {
+                g.reverse();
+                d.reverse();
+                std::mem::swap(g, d);
+            }
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
