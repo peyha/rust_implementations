@@ -145,9 +145,8 @@ impl<T> BinaryTree<T>{
         }
 
     }
-}
 
-impl<T> BinaryTree<T>{
+
     pub fn reverse(&mut self){
         match self {
             BinaryTree::<T>::Nil => (),
@@ -159,6 +158,19 @@ impl<T> BinaryTree<T>{
         }
     }
 }
+
+impl<T> PartialEq for BinaryTree<T> where T: PartialEq{
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (BinaryTree::Nil, BinaryTree::Nil) => true,
+            (BinaryTree::Nil, BinaryTree::Node(_, _, _)) => false,
+            (BinaryTree::Node(_, _, _), BinaryTree::Nil) => false,
+            (BinaryTree::Node(x, g, d), BinaryTree::Node(y, l, r)) => (*x == *y) && (*g == *l) && (*d == *r)
+        }
+    }
+}
+
+
 
 
 #[cfg(test)]
@@ -192,5 +204,18 @@ mod tests {
 
         t.add_simple(1);
         assert_eq!(t.size(), 3);
+    }
+
+    #[test]
+    fn test_equal(){
+        let mut t = BinaryTree::<i64>::Nil;
+        let mut t2 = BinaryTree::<i64>::Nil;
+
+        assert_eq!(t, t2);
+
+        t.add_simple(1);
+        t2.add_simple(1);
+
+        assert_eq!(t, t2);
     }
 }
