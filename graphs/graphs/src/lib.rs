@@ -49,7 +49,16 @@ impl<V, E> Graph<V, E>{
     }
 }
 
-
+impl<V, E> Default for Graph<V, E>{
+    fn default() -> Self{
+        Graph::<V, E>{
+            vertices: Vec::new(),
+            edges: Vec::new(),
+            ids: HashSet::new(),
+            vertex_ids: HashSet::new(),
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -57,12 +66,7 @@ mod tests {
 
     #[test]
     fn test_nb() {
-        let g = Graph::<i64, i64>{
-            vertices: Vec::new(),
-            edges: Vec::new(),
-            ids: HashSet::new(),
-            vertex_ids: HashSet::new(),
-        };
+        let g = Graph::<i64, i64>::default();
 
         assert_eq!(g.nb_vertices(), 0);
         assert_eq!(g.nb_edges(), 0);
