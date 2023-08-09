@@ -10,6 +10,7 @@ struct Edge<T>{
     value: T,
 }
 
+// Graphs are not oriented by default
 struct Graph<V, E>{
     vertices: Vec<Vertex<V>>,
     edges: Vec<Edge<E>>,
@@ -47,6 +48,33 @@ impl<V, E> Graph<V, E>{
             self.vertex_ids.insert((id_a, id_b));
         }
     }
+
+    pub fn get_connected_component(&self, id: i64) -> Vec<i64>{
+        let mut cc = Vec::new();
+        let mut cc_set = HashSet::<i64>::new();
+        
+        if !self.ids.contains(&id){
+            return cc;
+        }
+        //Not opti, potentially O(|V||E|)
+        self.dfs_cc(&mut cc, &mut cc_set, id);
+
+        cc
+    }
+
+    pub fn dfs_cc(&self, cc: &mut Vec<i64>, cc_set: &mut HashSet<i64>, id: i64){
+        if cc_set.contains(&id){
+            return;
+        }
+        cc_set.insert(id);
+        cc.push(id);
+
+        for edge in self.edges.iter(){
+            if edge.id_a == id{
+                self.dfs_cc(cc, cc_set, edge.id_b);
+            }
+        }
+    }
 }
 
 impl<V, E> Default for Graph<V, E>{
@@ -70,5 +98,24 @@ mod tests {
 
         assert_eq!(g.nb_vertices(), 0);
         assert_eq!(g.nb_edges(), 0);
+    }
+
+    #[test]
+    fn test_cc() {
+        let mut g = Graph::<i64, i64>::default();
+
+        g.add_vertex(0, 0);
+        g.add_vertex(1, 0);
+        g.add_vertex(2, 0);
+
+        g.add_edge(0, 1, 1);
+
+        let cc = g.get_connected_component(0);
+
+        assert_eq!(cc.len(), 2);
+
+        let cc = g.get_connected_component(-1);
+        
+        assert_eq!(cc.len(), 0);
     }
 }
