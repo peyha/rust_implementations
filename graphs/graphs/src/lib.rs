@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 struct Vertex<T>{
     id: i64,
@@ -11,14 +11,15 @@ struct Edge<T>{
 }
 
 // Graphs are not oriented by default
-struct Graph<V, E>{
+struct Graph<V, E> where E: Copy{
     vertices: Vec<Vertex<V>>,
     edges: Vec<Edge<E>>,
     ids: HashSet<i64>,
-    vertex_ids: HashSet<(i64, i64)>,
+    edge_ids: HashSet<(i64, i64)>,
+    edge_matrix: HashMap<(i64, i64), E>,
 }
 
-impl<V, E> Graph<V, E>{
+impl<V, E> Graph<V, E> where E: Copy{
     pub fn nb_vertices(&self) -> usize{
         self.vertices.len()
     }
@@ -39,13 +40,14 @@ impl<V, E> Graph<V, E>{
     }
 
     pub fn add_edge(&mut self, id_a: i64, id_b: i64, value: E){
-        if self.ids.contains(&id_a) && self.ids.contains(&id_b) && !self.vertex_ids.contains(&(id_a, id_b)){
+        if self.ids.contains(&id_a) && self.ids.contains(&id_b) && !self.edge_ids.contains(&(id_a, id_b)){
             self.edges.push(Edge::<E>{
                 id_a: id_a,
                 id_b: id_b,
                 value: value
             });
-            self.vertex_ids.insert((id_a, id_b));
+            self.edge_ids.insert((id_a, id_b));
+            self.edge_matrix.insert((id_a, id_b), value);
         }
     }
 
@@ -77,13 +79,14 @@ impl<V, E> Graph<V, E>{
     }
 }
 
-impl<V, E> Default for Graph<V, E>{
+impl<V, E> Default for Graph<V, E> where E: Copy{
     fn default() -> Self{
         Graph::<V, E>{
             vertices: Vec::new(),
             edges: Vec::new(),
             ids: HashSet::new(),
-            vertex_ids: HashSet::new(),
+            edge_ids: HashSet::new(),
+            edge_matrix: HashMap::new(),
         }
     }
 }
