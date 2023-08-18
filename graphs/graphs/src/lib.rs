@@ -11,6 +11,7 @@ struct Edge<T>{
 }
 
 // Graphs are not oriented by default
+// Graphs cannot have multiple edges
 struct Graph<V, E> where E: Copy{
     vertices: Vec<Vertex<V>>,
     edges: Vec<Edge<E>>,
@@ -77,6 +78,16 @@ impl<V, E> Graph<V, E> where E: Copy{
             }
         }
     }
+    pub fn is_undirected(&self) -> bool {
+        // does not ensure that the edges value are the same
+        for edge in &self.edges {
+            if !self.edge_matrix.contains_key(&(edge.id_b, edge.id_a)){
+                return false;
+            }
+        }
+
+        true
+    }
 }
 
 impl<V, E> Default for Graph<V, E> where E: Copy{
@@ -120,5 +131,20 @@ mod tests {
         let cc = g.get_connected_component(-1);
         
         assert_eq!(cc.len(), 0);
+    }   
+
+    #[test]
+    fn test_undirected(){
+        let mut g = Graph::<i64, i64>::default();
+
+        g.add_vertex(0, 0);
+        g.add_vertex(1, 0);
+        g.add_edge(0, 1, 1);
+
+        assert!(!g.is_undirected());
+        
+        g.add_edge(1, 0, 2);
+
+        assert!(g.is_undirected());
     }
 }
