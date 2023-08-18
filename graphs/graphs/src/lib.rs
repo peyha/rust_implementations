@@ -1,4 +1,5 @@
 use std::collections::{HashSet, HashMap};
+use num_traits::Num;
 
 struct Vertex<T>{
     id: i64,
@@ -18,6 +19,11 @@ struct Graph<V, E> where E: Copy{
     ids: HashSet<i64>,
     edge_ids: HashSet<(i64, i64)>,
     edge_matrix: HashMap<(i64, i64), E>,
+}
+
+enum DijkstraError{
+    NegativeEdgeWeights,
+    NotConnected,
 }
 
 impl<V, E> Graph<V, E> where E: Copy{
@@ -90,6 +96,17 @@ impl<V, E> Graph<V, E> where E: Copy{
     }
 }
 
+impl<V, E> Graph<V, E> where E: Copy + Num{
+    fn dijkstra(id_start: i64, id_end: i64) -> Result<E, DijkstraError>{
+        //TODO implementation and check of positive edges
+        Err(DijkstraError::NegativeEdgeWeights)
+    }
+
+    fn floyd_warshall(id_start: i64) -> HashMap<i64, E>{
+        //TODO
+        HashMap::new()
+    }
+} 
 impl<V, E> Default for Graph<V, E> where E: Copy{
     fn default() -> Self{
         Graph::<V, E>{
